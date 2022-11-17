@@ -16,15 +16,16 @@ def send_lesson_info(new_attempts, chat_id):
     if is_lesson_negative:
         bot.send_message(chat_id=chat_id,
                          text=tw.dedent(
-                             f'''У вас проверили урок "{lesson_name}"
-                                        
-                             К сожалению, в работе нашлись ошибки.''')
-                        )
+f'''Преподаватель проверил урок: "{lesson_title}"
+               
+К сожалению, в работе нашлись ошибки''')
+        )
     else:
         bot.send_message(chat_id=chat_id,
-                         text=tw.dedent(f'''У вас проверили урок "{lesson_name}"
+                         text=tw.dedent(
+f'''У вас проверили урок "{lesson_name}"
         
-                                        Преподавателю всё понравилось, можете приступать к другому уроку!'''))
+Преподавателю всё понравилось, можете приступать к другому уроку!'''))
 
 
 def check_lessons(devman_token, chat_id):
