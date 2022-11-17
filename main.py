@@ -16,7 +16,7 @@ def send_lesson_info(new_attempts, chat_id):
     if is_lesson_negative:
         bot.send_message(chat_id=chat_id,
                          text=tw.dedent(
-f'''Преподаватель проверил урок: "{lesson_title}"
+f'''Преподаватель проверил урок: "{lesson_name}"
                
 К сожалению, в работе нашлись ошибки''')
         )
