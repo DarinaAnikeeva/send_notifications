@@ -3,12 +3,13 @@ import time
 import argparse
 import textwrap as tw
 import requests
+import logging
 
 from dotenv import load_dotenv
 from telegram import Bot
 from telegram.ext import Updater
 
-
+logger = logging.getLogger('dever')
 
 def send_lesson_info(new_attempts, chat_id):
     lesson_name = new_attempts['lesson_title']
@@ -61,6 +62,17 @@ def check_lessons(devman_token, chat_id):
                              text='Отсутствует интернет, проверьте подключение')
             time.sleep(10)
 
+class TelegramLogsHandler(logging.Handler):
+
+    def __init__(self, tg_bot, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.tg_bot = tg_bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -77,4 +89,16 @@ if __name__ == "__main__":
     bot = Bot(token=tg_token)
     updater = Updater(token=tg_token, use_context=True)
 
-    check_lessons(devman_token, chat_id=args.chat_id)
+
+    try:
+        logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
+        logger.setLevel(logging.INFO)
+        logger.addHandler(TelegramLogsHandler(
+            tg_bot=bot,
+            chat_id=args.chat_id
+        ))
+        logger.info('Бот запущен')
+        check_lessons(devman_token, chat_id=args.chat_id)
+    except:
+        logger.error('Бот упал с ошибкой')
+
