@@ -98,7 +98,9 @@ if __name__ == "__main__":
             chat_id=args.chat_id
         ))
         logger.info('Бот запущен')
+        0/0
         check_lessons(devman_token, chat_id=args.chat_id)
-    except:
-        logger.error('Бот упал с ошибкой')
+    except Exception as err:
+        logger.info('Бот упал с ошибкой')
+        logger.error(err, exc_info=True)
 
