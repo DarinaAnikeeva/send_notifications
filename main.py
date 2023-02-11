@@ -11,22 +11,24 @@ from telegram.ext import Updater
 
 logger = logging.getLogger('dever')
 
+
 def send_lesson_info(new_attempts, chat_id):
     lesson_name = new_attempts['lesson_title']
     is_lesson_negative = new_attempts['is_negative']
     if is_lesson_negative:
         bot.send_message(chat_id=chat_id,
-                         text=tw.dedent(
-f'''Преподаватель проверил урок: "{lesson_name}"
-               
-К сожалению, в работе нашлись ошибки''')
-        )
+                         text=tw.dedent(f'''
+                            Преподаватель проверил урок: "{lesson_name}"
+                                           
+                            К сожалению, в работе нашлись ошибки''')
+                         )
     else:
         bot.send_message(chat_id=chat_id,
-                         text=tw.dedent(
-f'''У вас проверили урок "{lesson_name}"
-        
-Преподавателю всё понравилось, можете приступать к другому уроку!'''))
+                         text=tw.dedent(f'''
+                            У вас проверили урок "{lesson_name}"
+                                    
+                            Преподавателю всё понравилось, можете приступать к другому уроку!''')
+                         )
 
 
 def check_lessons(devman_token, chat_id):
@@ -58,9 +60,10 @@ def check_lessons(devman_token, chat_id):
         except requests.exceptions.ReadTimeout:
             pass
         except requests.exceptions.ConnectionError:
-            bot.send_message(chat_id=chat_id,
-                             text='Отсутствует интернет, проверьте подключение')
+            logger.error('Отсутствует подключение к интернету')
             time.sleep(10)
+            pass
+
 
 class TelegramLogsHandler(logging.Handler):
 
@@ -89,7 +92,6 @@ if __name__ == "__main__":
     bot = Bot(token=tg_token)
     updater = Updater(token=tg_token, use_context=True)
 
-
     try:
         logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
         logger.setLevel(logging.INFO)
@@ -98,9 +100,7 @@ if __name__ == "__main__":
             chat_id=args.chat_id
         ))
         logger.info('Бот запущен')
-        0/0
         check_lessons(devman_token, chat_id=args.chat_id)
     except Exception as err:
         logger.info('Бот упал с ошибкой')
         logger.error(err, exc_info=True)
-
