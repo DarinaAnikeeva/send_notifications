@@ -1,6 +1,5 @@
 import os
 import time
-import argparse
 import textwrap as tw
 import requests
 import logging
@@ -78,16 +77,10 @@ class TelegramLogsHandler(logging.Handler):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'chat_id',
-        type=int,
-        help='chat_id вашего телеграма')
-    args = parser.parse_args()
-
     load_dotenv()
     devman_token = os.getenv('DEVMAN_TOKEN')
     tg_token = os.getenv('TG_TOKEN')
+    chat_id = os.getenv('CHAT_ID')
 
     bot = Bot(token=tg_token)
     updater = Updater(token=tg_token, use_context=True)
@@ -97,10 +90,10 @@ if __name__ == "__main__":
         logger.setLevel(logging.INFO)
         logger.addHandler(TelegramLogsHandler(
             tg_bot=bot,
-            chat_id=args.chat_id
+            chat_id=chat_id
         ))
         logger.info('Бот запущен')
-        check_lessons(devman_token, chat_id=args.chat_id)
+        check_lessons(devman_token, chat_id=chat_id)
     except Exception as err:
         logger.info('Бот упал с ошибкой')
         logger.error(err, exc_info=True)
